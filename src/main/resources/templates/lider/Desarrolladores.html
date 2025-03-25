@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desarrolladores - IKernell Soluciones Software</title>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom Variables */
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --dark-bg: #1e293b;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+
+        /* Custom Card Styling */
+        .card-developer {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-developer:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            height: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .developer-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .card-developer:hover .developer-avatar {
+            transform: scale(1.05);
+        }
+
+        .developer-info p {
+            font-size: 0.95rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .badge-custom {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Custom Accordion Styling */
+        .accordion-item {
+            border: none;
+            background: transparent;
+            margin-bottom: 10px;
+        }
+
+        .accordion-button {
+            background: #f1f5f9;
+            color: var(--dark-bg);
+            border-radius: 8px !important;
+            padding: 12px 20px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .accordion-body {
+            background: #fff;
+            border-radius: 0 0 8px 8px;
+            padding: 15px;
+            animation: slideDown 0.3s ease-in-out;
+            border: 1px solid var(--border-color);
+            border-top: none;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 200px; }
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge.bg-primary {
+            background: var(--primary-color) !important;
+        }
+
+        /* Assign Button */
+        .btn-assign {
+            background: var(--success-color);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-assign:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-assign::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .btn-assign:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        /* Custom Modal Styling */
+        .modal-content {
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: none;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+            padding: 15px 20px;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+            outline: none;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-success::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .btn-success:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        /* Pagination */
+        .pagination .page-link {
+            border-radius: 6px;
+            margin: 0 5px;
+            transition: var(--transition);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .pagination .page-link:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/lider/index}">Dashboard</a></li>
+                <li><a th:href="@{/lider/Proyectos}">Proyectos</a></li>
+                <li><a th:href="@{/lider/Desarrolladores}" class="active">Desarrolladores</a></li>
+                <li><a th:href="@{/lider/biblioteca}">Biblioteca</a></li>
+                <li><a th:href="@{/lider/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<section class="dashboard-section">
+    <div class="container">
+    <h2 class="text-center mb-4" style="color: #264653;">Gestión de Desarrolladores</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" id="searchDeveloper" class="form-control" placeholder="Buscar desarrollador...">
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filtrosModal">
+                <i class="fas fa-filter"></i> Filtros
+            </button>
+        </div>
+    </div>
+
+    <div class="row" id="developersContainer">
+        <div th:each="desarrollador : ${desarrolladores}" class="col-md-4 mb-4">
+            <div class="card card-developer">
+                <div class="card-header-custom"></div>
+                <div class="card-body text-center">
+                    <img th:src="${desarrollador.fotoPerfil != null} ? 'data:image/png;base64,' + ${desarrollador.fotoBase64} : '/img/default-avatar.png'"
+                         class="developer-avatar mb-3">
+
+                    <div class="developer-info">
+                        <p><i class="fas fa-user-tie me-2"></i><span th:text="${desarrollador.nombre + ' ' + desarrollador.apellido}"></span></p>
+                        <p><i class="fas fa-envelope me-2"></i><span th:text="${desarrollador.email}"></span></p>
+                        <p><i class="fas fa-phone me-2"></i><span th:text="${desarrollador.telefono ?: 'No disponible'}"></span></p>
+                        <p><i class="fas fa-id-card me-2"></i><span th:text="${desarrollador.identificacion}"></span></p>
+                    </div>
+
+                    <div class="row mt-3 mb-3">
+                        <div class="col">
+                            <span class="badge badge-custom">
+                                <i class="fas fa-tasks me-2"></i>
+                                Actividades: <span th:text="${actividadesPorDesarrollador[desarrollador.id] ?: 0}"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="accordion" th:id="'accordion' + ${desarrollador.id}">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" th:id="'headingActivities' + ${desarrollador.id}">
+                                <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse"
+                                        th:data-bs-target="'#collapseActivities' + ${desarrollador.id}">
+                                    Ver Actividades
+                                </button>
+                            </h2>
+                            <div th:id="'collapseActivities' + ${desarrollador.id}"
+                                 class="accordion-collapse collapse"
+                                 th:attr="data-bs-parent='#accordion' + ${desarrollador.id}">
+                                <div class="accordion-body">
+                                    <ul class="list-group">
+                                        <li th:each="actividad : ${actividadesDesarrollador[desarrollador.id]}"
+                                            class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span th:text="${actividad.nombre}"></span>
+                                            <span th:text="${actividad.estado}"
+                                                  class="badge bg-primary rounded-pill"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-assign mt-3 w-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#asignarActividadModal"
+                            th:data-desarrollador-id="${desarrollador.id}"
+                            th:data-desarrollador-nombre="${desarrollador.nombre + ' ' + desarrollador.apellido}">
+                        <i class="fas fa-plus-circle me-2"></i> Asignar Actividad
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Paginación de desarrolladores" th:if="${totalPaginas > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${paginaActual == 1 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/lider/Desarrolladores(page=${paginaActual - 1})}">Anterior</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPaginas)}"
+                th:classappend="${paginaActual == i ? 'active' : ''}">
+                <a class="page-link" th:href="@{/lider/Desarrolladores(page=${i})}" th:text="${i}"></a>
+            </li>
+            <li class="page-item" th:classappend="${paginaActual == totalPaginas ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/lider/Desarrolladores(page=${paginaActual + 1})}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+    </div>
+</section>
+
+<!-- Asignar Actividad Modal -->
+<div class="modal fade" id="asignarActividadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Asignar Actividad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="asignarActividadForm" th:action="@{/lider/Actividades/Asignar}" method="post">
+                    <input type="hidden" id="modalDesarrolladorId" name="desarrolladorId">
+
+                    <div class="mb-3">
+                        <label class="form-label">Desarrollador</label>
+                        <input type="text" class="form-control" id="modalDesarrolladorNombre" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre de la Actividad</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="etapaId" class="form-label">Seleccionar Etapa</label>
+                        <select class="form-control" id="etapaId" name="etapaId" required>
+                            <option value="">-- Seleccione una Etapa --</option>
+                            <option th:each="etapa : ${etapas}" th:value="${etapa.id}" th:text="${etapa.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Asignar Actividad</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+                <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Asignar Actividad Modal Script
+    document.addEventListener('DOMContentLoaded', function() {
+        const asignarActividadModal = document.getElementById('asignarActividadModal');
+        asignarActividadModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const desarrolladorId = button.getAttribute('data-desarrollador-id');
+            const desarrolladorNombre = button.getAttribute('data-desarrollador-nombre');
+
+            const modalDesarrolladorId = document.getElementById('modalDesarrolladorId');
+            const modalDesarrolladorNombre = document.getElementById('modalDesarrolladorNombre');
+
+            modalDesarrolladorId.value = desarrolladorId;
+            modalDesarrolladorNombre.value = desarrolladorNombre;
+        });
+    });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9257ace7fd84da8f',t:'MTc0MjgzNTEwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

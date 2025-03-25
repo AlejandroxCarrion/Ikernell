@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Coordinador - IKernell Soluciones Software</title>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 📌 Estilos generales */
+.library-section {
+    padding: 50px 20px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.library-header h1 {
+    font-size: 2.5rem;
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+.library-header p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+/* 📌 Botones de filtrado */
+.library-categories {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.category-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.category-btn:hover {
+    background: #0056b3;
+}
+
+/* 📌 Diseño de la cuadrícula de recursos */
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.resource-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+}
+
+.resource-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.resource-card h3 {
+    font-size: 1.5rem;
+    color: #343a40;
+}
+
+.resource-card p {
+    color: #6c757d;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+/* 📌 Botones dentro de las tarjetas */
+.primary-btn, .secondary-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.primary-btn {
+    background: #28a745;
+    color: white;
+}
+
+.secondary-btn {
+    background: #ffc107;
+    color: #343a40;
+}
+
+.primary-btn:hover {
+    background: #218838;
+}
+
+.secondary-btn:hover {
+    background: #e0a800;
+}
+
+/* 📌 Responsive */
+@media (max-width: 768px) {
+    .library-categories {
+        flex-wrap: wrap;
+    }
+}
+
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/lider/index}">Dashboard</a></li>
+                <li><a th:href="@{/lider/Proyectos}">Proyectos</a></li>
+                <li><a th:href="@{/lider/Desarrolladores}">Desarrolladores</a></li>
+                <li><a th:href="@{/lider/biblioteca}" class="active">Biblioteca</a></li>
+                <li><a th:href="@{/lider/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<section class="dashboard-section">
+    <div class="container">
+        <section class="library-section">
+            <div class="container">
+                <div class="library-header">
+                    <h1>Biblioteca de Recursos</h1>
+                    <p>Explora una variedad de programas, herramientas y tutoriales de programación.</p>
+                </div>
+
+                <div class="library-categories">
+                    <button class="category-btn" onclick="filtrarRecursos('programas')">Programas</button>
+                    <button class="category-btn" onclick="filtrarRecursos('tutoriales')">Tutoriales</button>
+                    <button class="category-btn" onclick="filtrarRecursos('todos')">Ver Todos</button>
+                </div>
+
+                <div class="resource-grid" id="listaRecursos">
+                    <!-- Recursos dinámicos -->
+                    <div class="resource-card" data-category="programas">
+                        <img src="/img/programa1.png" alt="Programa 1">
+                        <h3>Gestor de Proyectos</h3>
+                        <p>Optimiza la planificación y seguimiento de tareas.</p>
+                        <a href="https://www.soyhenry.com/webfullstack?utm_source=google&utm_medium=cpc&utm_campaign=GADS_SEARCH_COL_FS_GEN&utm_content=Programacion&gad_source=1&gclid=Cj0KCQjw-e6-BhDmARIsAOxxlxWBHa8zI7Ut9IhTBammixd9o76BP0C7Zt6rfp0EwxVXt7qGsWnyihQaAkMJEALw_wcB" class="btn primary-btn">Descargar</a>
+                    </div>
+
+                    <div class="resource-card" data-category="tutoriales">
+                        <img src="/img/tutorial1.png" alt="Tutorial 1">
+                        <h3>Introducción a JavaScript</h3>
+                        <p>Aprende los fundamentos del lenguaje más usado en la web.</p>
+                        <a href="https://www.youtube.com/watch?v=1glVfFxj8a4" class="btn secondary-btn">Ver Tutorial</a>
+                    </div>
+
+                    <div class="resource-card" data-category="programas">
+                        <img src="/img/programa2.png" alt="Programa 2">
+                        <h3>Curso de Java: desde cero a experto</h3>
+                        <p>Transfórmate en un experto en java.</p>
+                        <a href="https://edutin.com/curso-de-java" class="btn primary-btn">Descargar</a>
+                    </div>
+
+                    <div class="resource-card" data-category="tutoriales">
+                        <img src="/img/tutorial2.png" alt="Tutorial 2">
+                        <h3>REACT: Crea tu primera web DESDE CERO [para principiantes]</h3>
+                        <p>Crea interfaces dinámicas con este poderoso framework.</p>
+                        <a href="https://www.youtube.com/watch?v=pFyAu4R684s" class="btn secondary-btn">Ver Tutorial</a>
+                    </div>
+
+                    <div class="resource-card" data-category="programas">
+                        <img src="/img/programa1.png" alt="Programa 1">
+                        <h3>Gestor de Proyectos</h3>
+                        <p>Optimiza la planificación y seguimiento de tareas.</p>
+                        <a href="https://www.soyhenry.com/webfullstack?utm_source=google&utm_medium=cpc&utm_campaign=GADS_SEARCH_COL_FS_GEN&utm_content=Programacion&gad_source=1&gclid=Cj0KCQjw-e6-BhDmARIsAOxxlxWBHa8zI7Ut9IhTBammixd9o76BP0C7Zt6rfp0EwxVXt7qGsWnyihQaAkMJEALw_wcB" class="btn primary-btn">Descargar</a>
+                    </div>
+
+                    <div class="resource-card" data-category="tutoriales">
+                        <img src="/img/tutorial1.png" alt="Tutorial 1">
+                        <h3>Introducción a JavaScript</h3>
+                        <p>Aprende los fundamentos del lenguaje más usado en la web.</p>
+                        <a href="https://www.youtube.com/watch?v=1glVfFxj8a4" class="btn secondary-btn">Ver Tutorial</a>
+                    </div>
+
+                    <div class="resource-card" data-category="programas">
+                        <img src="/img/programa2.png" alt="Programa 2">
+                        <h3>Curso de Java: desde cero a experto</h3>
+                        <p>Transfórmate en un experto en java.</p>
+                        <a href="https://edutin.com/curso-de-java" class="btn primary-btn">Descargar</a>
+                    </div>
+
+                    <div class="resource-card" data-category="tutoriales">
+                        <img src="/img/tutorial2.png" alt="Tutorial 2">
+                        <h3>REACT: Crea tu primera web DESDE CERO [para principiantes]</h3>
+                        <p>Crea interfaces dinámicas con este poderoso framework.</p>
+                        <a href="https://www.youtube.com/watch?v=pFyAu4R684s" class="btn secondary-btn">Ver Tutorial</a>
+                    </div>
+
+                    <div class="resource-card" data-category="programas">
+                        <img src="/img/programa1.png" alt="Programa 1">
+                        <h3>Gestor de Proyectos</h3>
+                        <p>Optimiza la planificación y seguimiento de tareas.</p>
+                        <a href="https://www.soyhenry.com/webfullstack?utm_source=google&utm_medium=cpc&utm_campaign=GADS_SEARCH_COL_FS_GEN&utm_content=Programacion&gad_source=1&gclid=Cj0KCQjw-e6-BhDmARIsAOxxlxWBHa8zI7Ut9IhTBammixd9o76BP0C7Zt6rfp0EwxVXt7qGsWnyihQaAkMJEALw_wcB" class="btn primary-btn">Descargar</a>
+                    </div>
+
+                    <div class="resource-card" data-category="tutoriales">
+                        <img src="/img/tutorial1.png" alt="Tutorial 1">
+                        <h3>Introducción a JavaScript</h3>
+                        <p>Aprende los fundamentos del lenguaje más usado en la web.</p>
+                        <a href="https://www.youtube.com/watch?v=1glVfFxj8a4" class="btn secondary-btn">Ver Tutorial</a>
+                    </div>
+
+                    <div class="resource-card" data-category="programas">
+                        <img src="/img/programa2.png" alt="Programa 2">
+                        <h3>Curso de Java: desde cero a experto</h3>
+                        <p>Transfórmate en un experto en java.</p>
+                        <a href="https://edutin.com/curso-de-java" class="btn primary-btn">Descargar</a>
+                    </div>
+
+                    <div class="resource-card" data-category="tutoriales">
+                        <img src="/img/tutorial2.png" alt="Tutorial 2">
+                        <h3>REACT: Crea tu primera web DESDE CERO [para principiantes]</h3>
+                        <p>Crea interfaces dinámicas con este poderoso framework.</p>
+                        <a href="https://www.youtube.com/watch?v=pFyAu4R684s" class="btn secondary-btn">Ver Tutorial</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            function filtrarRecursos(categoria) {
+                let recursos = document.querySelectorAll('.resource-card');
+                recursos.forEach(recurso => {
+                    if (categoria === 'todos' || recurso.getAttribute('data-category') === categoria) {
+                        recurso.style.display = 'block';
+                    } else {
+                        recurso.style.display = 'none';
+                    }
+                });
+            }
+        </script>
+
+    </div>
+</section>
+
+<!-- Modal para Cambiar Foto -->
+<div id="modalFoto" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModalFoto()">&times;</span>
+        <h2>Cambiar Foto de Perfil</h2>
+        <form id="formFoto" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="foto">Selecciona una imagen</label>
+                <input type="file" id="foto" name="foto" accept="image/*" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="btnSubirFoto" class="btn primary-btn">Subir Foto</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

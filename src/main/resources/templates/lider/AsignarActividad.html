@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Actividad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/img/ikernell.png" alt="Ikernell Logo" style="height: 40px; margin-right: 10px;">
+                IKERNELL - LÍDER DE PROYECTOS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/lider/index">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/lider/bibliotecas">Bibliotecas</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/lider/tutoriales">Tutoriales</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/lider/Proyectos">Proyectos</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/lider/Desarrolladores">Desarrolladores</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-danger text-white" th:href="@{/logout}">Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 flex-grow-1">
+        <h2 class="text-center mb-4">Asignar Actividad</h2>
+
+        <div class="card shadow-lg mb-4">
+            <div class="card-body text-center">
+                <h4 class="card-title" th:text="${desarrollador.nombre + ' ' + desarrollador.apellido}">Nombre Desarrollador</h4>
+                <p class="card-text"><strong>Correo:</strong> <span th:text="${desarrollador.email}"></span></p>
+            </div>
+        </div>
+
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <form th:action="@{/lider/Actividades/Asignar}" method="post">
+                    <input type="hidden" name="desarrolladorId" th:value="${desarrollador.id}">
+
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre de la Actividad:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción:</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="etapaId" class="form-label">Seleccionar Etapa:</label>
+                        <select class="form-control" id="etapaId" name="etapaId" required>
+                            <option value="">-- Seleccione una Etapa --</option>
+                            <option th:each="etapa : ${etapas}" th:value="${etapa.id}" th:text="${etapa.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Asignar Actividad</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/lider/Desarrolladores" class="btn btn-danger">Cancelar</a>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p>&copy; 2025 Ikernell. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

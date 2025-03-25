@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Ikernell</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/img/ikernell.png" alt="Ikernell Logo" style="height: 40px; margin-right: 10px;">
+                Ikernell
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/noticias">Noticias</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/preguntas">Preguntas</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/contacto">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="/login">Iniciar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Registro -->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Registro</h3>
+                </div>
+                <div class="card-body">
+
+                    <!-- Mensaje de error -->
+                    <div th:if="${param.error}" class="alert alert-danger text-center">
+                        Error en el registro, verifica los datos.
+                    </div>
+
+                    <!-- Formulario de Registro -->
+                    <form action="/registro" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario()">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" 
+                                    placeholder="Ingrese su Nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" 
+                                    placeholder="Ingrese su Apellido" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="identificacion" class="form-label">Identificación</label>
+                                <input type="number" class="form-control" id="identificacion" name="identificacion"
+                                    placeholder="Ingrese su Identificación" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                    placeholder="Ingrese su Teléfono" pattern="[0-9]+" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Ingrese su Dirección" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="profesion" class="form-label">Profesión</label>
+                                <input type="text" class="form-control" id="profesion" name="profesion" placeholder="Ingrese su Profesión" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="especialidad" class="form-label">Especialidad</label>
+                                <input type="text" class="form-control" id="especialidad" name="especialidad" placeholder="Especialidad de Desarrollo" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su Correo Electrónico" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="contrasena" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="contrasena" name="contrasena" 
+                                placeholder="Ingrese su Contraseña" minlength="8" maxlength="25" required>
+                            <small class="form-text text-primary">Debe tener entre 8 y 25 caracteres.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmarContrasena" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-control" id="confirmarContrasena" name="confirmarContrasena" 
+                                placeholder="Confirme su Contraseña" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fotoPerfil" class="form-label">Foto de Perfil</label>
+                            <input type="file" class="form-control" id="fotoPerfil" name="fotoPerfil" accept="image/*" required>
+                            <small class="form-text text-primary">Debe ser de 400x400 píxeles y menor a 2MB.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                    </form>
+
+                    <script>
+                        function validarFormulario() {
+                            let contrasena = document.getElementById("contrasena").value;
+                            let confirmarContrasena = document.getElementById("confirmarContrasena").value;
+                            let fotoPerfil = document.getElementById("fotoPerfil").files[0];
+                    
+                            if (contrasena !== confirmarContrasena) {
+                                alert("Las contraseñas no coinciden. Verifica nuevamente.");
+                                return false;
+                            }
+                    
+                            if (fotoPerfil) {
+                                if (fotoPerfil.size > 2 * 1024 * 1024) {
+                                    alert("La imagen es demasiado grande. Debe ser menor a 2MB.");
+                                    document.getElementById("fotoPerfil").value = ""; 
+                                    return false;
+                                }
+
+                                let img = new Image();
+                                img.src = URL.createObjectURL(fotoPerfil);
+                                img.onload = function () {
+                                    if (img.width !== 400 || img.height !== 400) {
+                                        alert("La imagen debe ser de 400x400 píxeles.");
+                                        document.getElementById("fotoPerfil").value = "";
+                                    } else {
+                                        document.querySelector("form").submit();
+                                    }
+                                };
+                                return false;
+                            }
+                            return true;
+                        }
+                    </script>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 Ikernell. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

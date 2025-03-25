@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Coordinador - IKernell Soluciones Software</title>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/coordinador/index}" class="active">Dashboard</a></li>
+                <li><a th:href="@{/coordinador/proyectos}">Proyectos</a></li>
+                <li><a th:href="@{/coordinador/Usuarios}">Usuarios</a></li>
+                <li><a th:href="@{/coordinador/biblioteca}">Biblioteca</a></li>
+                <li><a th:href="@{/coordinador/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<section class="dashboard-section">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Dashboard de Coordinador</h1>
+            <p>Bienvenido</p>
+        </div>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Proyectos Activos</h3>
+                    <p class="stat-number" th:text="${proyectosActivos}">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Desarrolladores</h3>
+                    <p class="stat-number" th:text="${totalDesarrolladores}">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Líderes</h3>
+                    <p class="stat-number" th:text="${totalLideres}">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-pause-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Proyectos Inactivos</h3>
+                    <p class="stat-number" th:text="${proyectosInactivos}">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-main">
+            <div class="dashboard-card recent-projects">
+                <div class="card-header">
+                    <h2>Proyectos Recientes</h2>
+                    <a th:href="@{/coordinador/proyectos}" class="view-all">Ver todos</a>
+                </div>
+                <div class="card-content">
+                    <table class="dashboard-table">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Líder</th>
+                            <th>Progreso</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Proyectos de ejemplo para cuando no hay datos -->
+                        <tr >
+                            <td>Sistema de Gestión Hospitalaria</td>
+                            <td>Carlos Rodríguez</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 75%"></div>
+                                </div>
+                                <span class="progress-text">75%</span>
+                            </td>
+                            <td><span class="status active">Activo</span></td>
+                            <td>
+                                <a href="#" class="action-btn"><i class="fas fa-eye"></i></a>
+                                <a href="#" class="action-btn"><i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>App Móvil Financiera</td>
+                            <td>Laura Gómez</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 45%"></div>
+                                </div>
+                                <span class="progress-text">45%</span>
+                            </td>
+                            <td><span class="status active">Activo</span></td>
+                            <td>
+                                <a href="#" class="action-btn"><i class="fas fa-eye"></i></a>
+                                <a href="#" class="action-btn"><i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-row">
+                <div class="dashboard-card recent-users">
+                    <div class="card-header">
+                        <h2>Usuarios Recientes</h2>
+                        <a th:href="@{/coordinador/usuarios}" class="view-all">Ver todos</a>
+                    </div>
+                    <div class="card-content">
+                        <div class="user-list">
+                            <!-- Usuarios de ejemplo para cuando no hay datos -->
+                            <div class="user-item" >
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h4>Ana Martínez</h4>
+                                    <p>Desarrolladora Frontend</p>
+                                </div>
+                                <div class="user-role">
+                                    <span class="role developer">Desarrollador</span>
+                                </div>
+                            </div>
+                            <div class="user-item" >
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h4>Pedro López</h4>
+                                    <p>Desarrollador Backend</p>
+                                </div>
+                                <div class="user-role">
+                                    <span class="role developer">Desarrollador</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card action-buttons">
+                    <div class="card-header">
+                        <h2>Acciones Rápidas</h2>
+                    </div>
+                    <div class="card-content">
+                        <a th:href="@{/coordinador/CrearProyecto}" class="quick-action">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Nuevo Proyecto</span>
+                        </a>
+                        <a th:href="@{/coordinador/NuevoUsuario}" class="quick-action">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Agregar Usuario</span>
+                        </a>
+                        <a th:href="@{/coordinador/reportes}" class="quick-action">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Generar Reporte</span>
+                        </a>
+                        <a th:href="@{/configuracion}" class="quick-action">
+                            <i class="fas fa-cog"></i>
+                            <span>Configuración</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+                <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script th:src="@{/js/inicio.js}"></script>
+<script>
+    // Efecto de navbar al hacer scroll
+    $(window).scroll(function() {
+        if ($(this).scrollTop() > 50) {
+            $('header').addClass('scrolled');
+        } else {
+            $('header').removeClass('scrolled');
+        }
+    });
+</script>
+</body>
+</html>

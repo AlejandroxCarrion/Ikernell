@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ikernell - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/img/ikernell.png" alt="Ikernell Logo" style="height: 40px; width: auto; margin-right: 10px;">
+                Ikernell
+            </a>            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/noticias">Noticias</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/preguntas">Preguntas</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="/contacto">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="/login">Iniciar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1>Bienvenido a Ikernell</h1>
+            <p class="lead">Automatizamos procesos y brindamos soluciones de software innovadoras.</p>
+        </div>
+    </header>
+
+    <!-- Lineamientos de la Empresa -->
+    <section class="container my-5">
+        <h2 class="text-center">Nuestros Lineamientos</h2>
+        <p class="text-center">En Ikernell, nos especializamos en el desarrollo de software eficiente y seguro, brindando soluciones que optimizan los procesos empresariales.</p>
+    </section>
+
+    <!-- Secciones en Tarjetas -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Más sobre nosotros</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <img src="/img/noticias.jpg" class="card-img-top" alt="Noticias">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Noticias</h5>
+                        <p class="card-text">Mantente informado sobre las últimas tendencias en software y tecnología.</p>
+                        <a href="/noticias" class="btn btn-primary">Ver Noticias</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <img src="/img/preguntas.jpg" class="card-img-top" alt="Preguntas Frecuentes">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Preguntas Frecuentes</h5>
+                        <p class="card-text">Resuelve tus dudas con nuestra sección de preguntas frecuentes.</p>
+                        <a href="/preguntas" class="btn btn-secondary">Ver Preguntas</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <img src="/img/contacto.jpg" class="card-img-top" alt="Contacto">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Contáctanos</h5>
+                        <p class="card-text">¿Tienes alguna consulta? Escríbenos y te responderemos pronto.</p>
+                        <a href="/contacto" class="btn btn-dark">Ir a Contacto</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portafolio de Servicios -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Nuestros Servicios</h2>
+        <div id="carouselServicios" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="card text-center shadow">
+                        <img src="/img/servicio1.jpg" class="card-img-top" alt="Desarrollo de Software">
+                        <div class="card-body">
+                            <h5 class="card-title">Desarrollo de Software</h5>
+                            <p class="card-text">Creamos soluciones digitales a la medida de cada negocio.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="card text-center shadow">
+                        <img src="/img/servicio2.jpg" class="card-img-top" alt="Consultoría IT">
+                        <div class="card-body">
+                            <h5 class="card-title">Consultoría IT</h5>
+                            <p class="card-text">Brindamos asesoría en infraestructura y seguridad tecnológica.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="card text-center shadow">
+                        <img src="/img/servicio3.jpg" class="card-img-top" alt="Automatización de Procesos">
+                        <div class="card-body">
+                            <h5 class="card-title">Automatización de Procesos</h5>
+                            <p class="card-text">Implementamos soluciones inteligentes para optimizar flujos de trabajo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Controles del Carrusel -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselServicios" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselServicios" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 Ikernell. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

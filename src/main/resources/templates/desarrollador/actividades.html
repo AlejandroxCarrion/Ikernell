@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Actividades - IKernell Soluciones Software</title>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos generales del Kanban */
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .kanban-column {
+            min-width: 300px;
+            width: 33%;
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .kanban-column:hover {
+            transform: translateY(-5px);
+        }
+
+        .kanban-column-header {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kanban-column-title {
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kanban-column-title i {
+            font-size: 20px;
+        }
+
+        .badge-count {
+            background-color: #ffffff;
+            color: #333;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .kanban-tasks {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .task-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 15px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border-left: 5px solid;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .task-project {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .task-description {
+            font-size: 0.9rem;
+            color: #34495e;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 500;
+        }
+
+        .action-btn i {
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            opacity: 0.95;
+        }
+
+        .btn-error {
+            background-color: #e74c3c;
+        }
+
+        .btn-interrupcion {
+            background-color: #f39c12;
+        }
+
+        .btn-cambiar {
+            background-color: #3498db;
+        }
+
+        .search-box {
+            margin: 20px 0;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 12px 40px 12px 15px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            width: 100%;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #3498db;
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-box::after {
+            content: '\f002';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+
+        /* Estilos para los estados */
+        .status-pendiente {
+            border-left-color: #e74c3c;
+        }
+
+        .status-proceso {
+            border-left-color: #3498db;
+        }
+
+        .status-completada {
+            border-left-color: #2ecc71;
+        }
+
+        /* Encabezados de columnas */
+        .column-pendiente .kanban-column-header {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .column-proceso .kanban-column-header {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .column-completada .kanban-column-header {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .column-pendiente .badge-count {
+            color: #e74c3c;
+        }
+
+        .column-proceso .badge-count {
+            color: #3498db;
+        }
+
+        .column-completada .badge-count {
+            color: #2ecc71;
+        }
+
+        /* Estilos para botones principales */
+        .action-buttons .btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .action-buttons .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .kanban-board {
+                flex-direction: column;
+            }
+
+            .kanban-column {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .task-actions {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/desarrollador/index}">Dashboard</a></li>
+                <li><a th:href="@{/desarrollador/actividades}" class="active">Actividades</a></li>
+                <li><a th:href="@{/desarrollador/biblioteca}">Biblioteca</a></li>
+                <li><a th:href="@{/desarrollador/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<section class="dashboard-section">
+    <div class="container">
+        <h1>Mis Actividades</h1>
+
+        <!-- Mensajes flash (sin cambios) -->
+        <div th:if="${param.success}" class="flash-message success">
+            <p th:text="${param.success}">Operación exitosa</p>
+        </div>
+        <div th:if="${param.error}" class="flash-message error">
+            <p th:text="${param.error}">Ha ocurrido un error</p>
+        </div>
+
+
+        <!-- Búsqueda -->
+        <div class="search-box">
+            <input type="text" id="buscarActividad" placeholder="Buscar actividad..." onkeyup="filtrarActividades()">
+        </div>
+
+        <!-- Tablero Kanban -->
+        <div class="kanban-board">
+            <!-- Columna Pendiente -->
+            <div class="kanban-column column-pendiente">
+                <div class="kanban-column-header">
+                    <div class="kanban-column-title"><i class="fas fa-clock"></i> Pendiente</div>
+                    <div class="badge-count" id="count-pendiente" th:text="${#lists.size(actividades.?[estado == T(com.ikernell.model.EstadoActividad).PENDIENTE])}">0</div>
+                </div>
+                <div class="kanban-tasks" id="tasks-pendiente">
+                    <div th:each="actividad : ${actividades}"
+                         th:if="${actividad.estado == T(com.ikernell.model.EstadoActividad).PENDIENTE}"
+                         class="task-card status-pendiente"
+                         th:attr="data-nombre=${actividad.nombre.toLowerCase()}">
+                        <div class="task-header">
+                            <div class="task-title" th:text="${actividad.nombre}">Nombre de la Actividad</div>
+                        </div>
+                        <div class="task-project" th:text="${actividad.etapa.proyecto.nombre}">Nombre del Proyecto</div>
+                        <div class="task-description" th:text="${actividad.descripcion}">Descripción de la actividad</div>
+                        <div class="task-footer">
+                            <div class="task-dates">
+                                <span th:text="${#temporals.format(actividad.fechaInicio, 'dd/MM/yyyy')}">01/01/2024</span> -
+                                <span th:text="${#temporals.format(actividad.fechaFinal, 'dd/MM/yyyy')}">31/01/2024</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <form th:action="@{/desarrollador/actividades/CambiarEstado/{id}(id=${actividad.id})}" method="post">
+                                <input type="hidden" name="estado" value="EN_PROCESO">
+                                <button type="submit" class="action-btn btn-cambiar"><i class="fas fa-play"></i></button>
+                            </form>
+                            <button class="action-btn btn-error" th:onclick="'abrirModalError(' + ${actividad.etapa.proyecto.id} + ')'">
+                                <i class="fas fa-bug"></i>
+                            </button>
+                            <button class="action-btn btn-interrupcion" th:onclick="'abrirModalInterrupcion(' + ${actividad.etapa.proyecto.id} + ')'">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna En Proceso -->
+            <div class="kanban-column column-proceso">
+                <div class="kanban-column-header">
+                    <div class="kanban-column-title"><i class="fas fa-cogs"></i> En Proceso</div>
+                    <div class="badge-count" id="count-proceso" th:text="${#lists.size(actividades.?[estado == T(com.ikernell.model.EstadoActividad).EN_PROCESO])}">0</div>
+                </div>
+                <div class="kanban-tasks" id="tasks-proceso">
+                    <div th:each="actividad : ${actividades}"
+                         th:if="${actividad.estado == T(com.ikernell.model.EstadoActividad).EN_PROCESO}"
+                         class="task-card status-proceso"
+                         th:attr="data-nombre=${actividad.nombre.toLowerCase()}">
+                        <div class="task-header">
+                            <div class="task-title" th:text="${actividad.nombre}">Nombre de la Actividad</div>
+                        </div>
+                        <div class="task-project" th:text="${actividad.etapa.proyecto.nombre}">Nombre del Proyecto</div>
+                        <div class="task-description" th:text="${actividad.descripcion}">Descripción de la actividad</div>
+                        <div class="task-footer">
+                            <div class="task-dates">
+                                <span th:text="${#temporals.format(actividad.fechaInicio, 'dd/MM/yyyy')}">01/01/2024</span> -
+                                <span th:text="${#temporals.format(actividad.fechaFinal, 'dd/MM/yyyy')}">31/01/2024</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <form th:action="@{/desarrollador/actividades/CambiarEstado/{id}(id=${actividad.id})}" method="post">
+                                <input type="hidden" name="estado" value="COMPLETADA">
+                                <button type="submit" class="action-btn btn-cambiar"><i class="fas fa-check"></i></button>
+                            </form>
+                            <button class="action-btn btn-error" th:onclick="'abrirModalError(' + ${actividad.etapa.proyecto.id} + ')'">
+                                <i class="fas fa-bug"></i>
+                            </button>
+                            <button class="action-btn btn-interrupcion" th:onclick="'abrirModalInterrupcion(' + ${actividad.etapa.proyecto.id} + ')'">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Completada -->
+            <div class="kanban-column column-completada">
+                <div class="kanban-column-header">
+                    <div class="kanban-column-title"><i class="fas fa-check-circle"></i> Completada</div>
+                    <div class="badge-count" id="count-completada" th:text="${#lists.size(actividades.?[estado == T(com.ikernell.model.EstadoActividad).COMPLETADA])}">0</div>
+                </div>
+                <div class="kanban-tasks" id="tasks-completada">
+                    <div th:each="actividad : ${actividades}"
+                         th:if="${actividad.estado == T(com.ikernell.model.EstadoActividad).COMPLETADA}"
+                         class="task-card status-completada"
+                         th:attr="data-nombre=${actividad.nombre.toLowerCase()}">
+                        <div class="task-header">
+                            <div class="task-title" th:text="${actividad.nombre}">Nombre de la Actividad</div>
+                        </div>
+                        <div class="task-project" th:text="${actividad.etapa.proyecto.nombre}">Nombre del Proyecto</div>
+                        <div class="task-description" th:text="${actividad.descripcion}">Descripción de la actividad</div>
+                        <div class="task-footer">
+                            <div class="task-dates">
+                                <span th:text="${#temporals.format(actividad.fechaInicio, 'dd/MM/yyyy')}">01/01/2024</span> -
+                                <span th:text="${#temporals.format(actividad.fechaFinal, 'dd/MM/yyyy')}">31/01/2024</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <form th:action="@{/desarrollador/actividades/CambiarEstado/{id}(id=${actividad.id})}" method="post">
+                                <input type="hidden" name="estado" value="EN_PROCESO">
+                                <button type="submit" class="action-btn btn-cambiar"><i class="fas fa-undo"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal Registrar Error -->
+<div id="modalError" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="cerrarModal('modalError')">&times;</span>
+        <div class="modal-header">
+            <h2 class="modal-title">Registrar Error</h2>
+        </div>
+        <div class="modal-body">
+            <form id="formError" th:action="@{/desarrollador/Errores/Registrar}" method="post">
+                <input type="hidden" id="proyectoIdError" name="proyectoId">
+
+                <div class="mb-3">
+                    <label for="nombreError" class="form-label">Nombre del Error</label>
+                    <input type="text" id="nombreError" name="nombre" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descripcionError" class="form-label">Descripción</label>
+                    <textarea id="descripcionError" name="descripcion" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tipoError" class="form-label">Tipo de Error</label>
+                    <select id="tipoError" name="tipo" class="form-control" required>
+                        <option value="CODIGO">Código</option>
+                        <option value="DISENO">Diseño</option>
+                        <option value="FUNCIONAL">Funcional</option>
+                        <option value="CONFIGURACION">Configuración</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="faseError" class="form-label">Fase del Proyecto</label>
+                    <input type="text" id="faseError" name="fase" class="form-control" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalError')">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="enviarFormulario('formError')">Registrar Error</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Registrar Interrupción -->
+<div id="modalInterrupcion" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="cerrarModal('modalInterrupcion')">&times;</span>
+        <div class="modal-header">
+            <h2 class="modal-title">Registrar Interrupción</h2>
+        </div>
+        <div class="modal-body">
+            <form id="formInterrupcion" th:action="@{/desarrollador/Interrupciones/Registrar}" method="post">
+                <input type="hidden" id="proyectoIdInterrupcion" name="proyectoId">
+
+                <div class="mb-3">
+                    <label for="nombreInterrupcion" class="form-label">Nombre de la interrupción:</label>
+                    <input type="text" class="form-control" id="nombreInterrupcion" name="nombre" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descripcionInterrupcion" class="form-label">Descripción:</label>
+                    <textarea class="form-control" id="descripcionInterrupcion" name="descripcion" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tipoInterrupcion" class="form-label">Tipo de Interrupción:</label>
+                    <select class="form-select form-control" id="tipoInterrupcion" name="tipo" required>
+                        <option value="PERSONAL">Personal</option>
+                        <option value="REUNION">Reunión</option>
+                        <option value="FALLA_TECNICA">Falla Técnica</option>
+                        <option value="EMERGENCIA">Emergencia</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="fechaInterrupcion" class="form-label">Fecha:</label>
+                    <input type="date" class="form-control" id="fechaInterrupcion" name="fecha" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="duracionMinutos" class="form-label">Duración (minutos):</label>
+                    <input type="number" class="form-control" id="duracionMinutos" name="duracionMinutos" min="1" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="faseInterrupcion" class="form-label">Fase del Proyecto:</label>
+                    <input type="text" class="form-control" id="faseInterrupcion" name="fase" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalInterrupcion')">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="enviarFormulario('formInterrupcion')">Registrar Interrupción</button>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+                <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar fecha actual para el campo fecha de interrupción
+        document.getElementById('fechaInterrupcion').valueAsDate = new Date();
+    });
+
+    // Filtrar actividades
+    function filtrarActividades() {
+        const busqueda = document.getElementById('buscarActividad').value.toLowerCase();
+        const tarjetas = document.querySelectorAll('.task-card');
+        let resultados = 0;
+
+        tarjetas.forEach(tarjeta => {
+            const nombre = tarjeta.getAttribute('data-nombre');
+            const visible = nombre.includes(busqueda);
+            tarjeta.style.display = visible ? 'block' : 'none';
+            if (visible) resultados++;
+        });
+
+        // Actualizar contadores
+        actualizarContadores();
+    }
+
+    // Actualizar contadores de cada columna
+    function actualizarContadores() {
+        const columnasEstado = ['pendiente', 'proceso', 'completada'];
+
+        columnasEstado.forEach(estado => {
+            const container = document.getElementById(`tasks-${estado}`);
+            const visibleTasks = Array.from(container.querySelectorAll('.task-card')).filter(
+                task => task.style.display !== 'none'
+            ).length;
+
+            document.getElementById(`count-${estado}`).textContent = visibleTasks;
+        });
+    }
+
+    // Funciones para los modales
+    function abrirModalError(proyectoId) {
+        document.getElementById('proyectoIdError').value = proyectoId;
+        document.getElementById('modalError').style.display = 'block';
+    }
+
+    function abrirModalInterrupcion(proyectoId) {
+        document.getElementById('proyectoIdInterrupcion').value = proyectoId;
+        document.getElementById('modalInterrupcion').style.display = 'block';
+    }
+
+    function cerrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function enviarFormulario(formId) {
+        document.getElementById(formId).submit();
+    }
+
+    // Cerrar modales si se hace clic fuera del contenido
+    window.onclick = function(event) {
+        const modales = document.getElementsByClassName('modal');
+        for (let i = 0; i < modales.length; i++) {
+            if (event.target === modales[i]) {
+                modales[i].style.display = 'none';
+            }
+        }
+    }
+
+    // Agregar estas funciones al final de tu script existente
+
+function cargarErrores() {
+    // Mostrar el modal
+    document.getElementById('modalVerErrores').style.display = 'block';
+
+    // Realizar petición AJAX para obtener los errores
+    fetch('/desarrollador/Errores/Listar')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('errorListBody');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                document.getElementById('errorList').style.display = 'none';
+                document.getElementById('errorEmptyMessage').style.display = 'block';
+            } else {
+                document.getElementById('errorList').style.display = 'block';
+                document.getElementById('errorEmptyMessage').style.display = 'none';
+
+                data.forEach(error => {
+                    const row = document.createElement('tr');
+
+                    // Formatear la fecha si existe
+                    let fechaFormateada = 'N/A';
+                    if (error.fechaRegistro) {
+                        const fecha = new Date(error.fechaRegistro);
+                        fechaFormateada = fecha.toLocaleDateString('es-ES');
+                    }
+
+                    row.innerHTML = `
+                        <td>${error.nombre}</td>
+                        <td>${formatearTipoError(error.tipo)}</td>
+                        <td>${error.fase}</td>
+                        <td>${error.descripcion}</td>
+                        <td>${fechaFormateada}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar los errores:', error);
+            document.getElementById('errorListBody').innerHTML =
+                '<tr><td colspan="5" class="text-center">Error al cargar los datos</td></tr>';
+        });
+}
+
+function cargarInterrupciones() {
+    // Mostrar el modal
+    document.getElementById('modalVerInterrupciones').style.display = 'block';
+
+    // Realizar petición AJAX para obtener las interrupciones
+    fetch('/desarrollador/Interrupciones/Listar')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('interrupcionListBody');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                document.getElementById('interrupcionList').style.display = 'none';
+                document.getElementById('interrupcionEmptyMessage').style.display = 'block';
+            } else {
+                document.getElementById('interrupcionList').style.display = 'block';
+                document.getElementById('interrupcionEmptyMessage').style.display = 'none';
+
+                data.forEach(interrupcion => {
+                    const row = document.createElement('tr');
+
+                    // Formatear la fecha
+                    let fechaFormateada = 'N/A';
+                    if (interrupcion.fecha) {
+                        const fecha = new Date(interrupcion.fecha);
+                        fechaFormateada = fecha.toLocaleDateString('es-ES');
+                    }
+
+                    row.innerHTML = `
+                        <td>${interrupcion.nombre}</td>
+                        <td>${formatearTipoInterrupcion(interrupcion.tipo)}</td>
+                        <td>${interrupcion.fase}</td>
+                        <td>${fechaFormateada}</td>
+                        <td>${interrupcion.duracionMinutos}</td>
+                        <td>${interrupcion.descripcion}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar las interrupciones:', error);
+            document.getElementById('interrupcionListBody').innerHTML =
+                '<tr><td colspan="6" class="text-center">Error al cargar los datos</td></tr>';
+        });
+}
+
+// Funciones de formateo para mostrar valores más amigables
+function formatearTipoError(tipo) {
+    const tipos = {
+        'CODIGO': 'Código',
+        'DISENO': 'Diseño',
+        'FUNCIONAL': 'Funcional',
+        'CONFIGURACION': 'Configuración'
+    };
+    return tipos[tipo] || tipo;
+}
+
+function formatearTipoInterrupcion(tipo) {
+    const tipos = {
+        'PERSONAL': 'Personal',
+        'REUNION': 'Reunión',
+        'FALLA_TECNICA': 'Falla Técnica',
+        'EMERGENCIA': 'Emergencia'
+    };
+    return tipos[tipo] || tipo;
+}
+</script>
+</body>
+</html>

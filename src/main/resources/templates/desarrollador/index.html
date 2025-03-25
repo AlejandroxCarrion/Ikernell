@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Desarrollador - IKernell Soluciones Software</title>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+        }
+        .blue-bg {
+            background-color: #4361ee;
+        }
+        .orange-bg {
+            background-color: #ff9f1c;
+        }
+        .green-bg {
+            background-color: #2ec4b6;
+        }
+        .red-bg {
+            background-color: #e71d36;
+        }
+        .card-stat {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .progress {
+            height: 100%;
+            border-radius: 5px;
+        }
+        .blue-progress {
+            background-color: #4361ee;
+        }
+        .orange-progress {
+            background-color: #ff9f1c;
+        }
+        .green-progress {
+            background-color: #2ec4b6;
+        }
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .chart-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            min-height: 350px;
+        }
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .recent-activities {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .activity-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        .activity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .pendiente {
+            background-color: #ff9f1c;
+        }
+        .en-progreso {
+            background-color: #4361ee;
+        }
+        .completada {
+            background-color: #2ec4b6;
+        }
+        .activity-content {
+            flex-grow: 1;
+        }
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .activity-date {
+            font-size: 12px;
+            color: #888;
+        }
+        .welcome-banner {
+            background: linear-gradient(120deg, #4361ee, #3f37c9);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .welcome-message {
+            display: flex;
+            align-items: center;
+        }
+        .welcome-text {
+            margin-left: 20px;
+        }
+        .welcome-text h2 {
+            margin-bottom: 10px;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #4361ee;
+        }
+        @media (max-width: 900px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/desarrollador/index}" class="active">Dashboard</a></li>
+                <li><a th:href="@{/desarrollador/actividades}">Actividades</a></li>
+                <li><a th:href="@{/desarrollador/biblioteca}">Biblioteca</a></li>
+                <li><a th:href="@{/desarrollador/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<section class="dashboard-section">
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-message">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="welcome-text">
+                    <h2 th:text="'Bienvenido, ' + ${nombreUsuario}">Bienvenido, Desarrollador</h2>
+                    <p>Panel de control para el seguimiento de tus actividades y proyectos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="dashboard-cards">
+            <!-- Total Actividades -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue-bg">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>Total Actividades</h3>
+                </div>
+                <div class="card-stat" th:text="${totalActividades}">0</div>
+                <p>Actividades asignadas</p>
+                <div class="progress-bar">
+                    <div class="progress blue-progress" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- Actividades Pendientes -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon orange-bg">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <h3>Pendientes</h3>
+                </div>
+                <div class="card-stat" th:text="${actividadesPendientes}">0</div>
+                <p th:text="'Representa el ' + ${totalActividades > 0 ? #numbers.formatPercent(actividadesPendientes / totalActividades, 1, 0) : '0%'} + ' del total'">Representa el 0% del total</p>
+                <div class="progress-bar">
+                    <div class="progress orange-progress" th:style="'width: ' + ${totalActividades > 0 ? (actividadesPendientes / totalActividades) * 100 : 0} + '%'"></div>
+                </div>
+            </div>
+
+            <!-- Actividades En Progreso -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue-bg">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <h3>En Proceso</h3>
+                </div>
+                <div class="card-stat" th:text="${actividadesEnProceso}">0</div>
+                <p th:text="'Representa el ' + ${totalActividades > 0 ? #numbers.formatPercent(actividadesEnProceso / totalActividades, 1, 0) : '0%'} + ' del total'">Representa el 0% del total</p>
+                <div class="progress-bar">
+                    <div class="progress blue-progress" th:style="'width: ' + ${totalActividades > 0 ? (actividadesEnProceso / totalActividades) * 100 : 0} + '%'"></div>
+                </div>
+            </div>
+
+            <!-- Actividades Completadas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green-bg">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Completadas</h3>
+                </div>
+                <div class="card-stat" th:text="${actividadesFinalizadas}">0</div>
+                <p th:text="'Representa el ' + ${totalActividades > 0 ? #numbers.formatPercent(actividadesPendientes / totalActividades, 1, 0) : '0%'} + ' del total'">Representa el 0% del total</p>
+                <div class="progress-bar">
+                    <div class="progress green-progress" th:style="'width: ' + ${totalActividades > 0 ? (actividadesFinalizadas / totalActividades) * 100 : 0} + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+            <!-- Progress Chart -->
+            <div class="chart-card">
+                <h3 class="chart-title">Progreso de actividades</h3>
+                <canvas id="progressChart"></canvas>
+            </div>
+
+            <!-- Timeline Chart -->
+            <div class="chart-card">
+                <h3 class="chart-title">Actividades por semana</h3>
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="recent-activities">
+            <h3 class="chart-title">Actividades recientes</h3>
+            <div th:if="${#lists.isEmpty(actividades)}">
+                <p>No tienes actividades asignadas actualmente.</p>
+            </div>
+            <div th:unless="${#lists.isEmpty(actividades)}">
+                <div class="activity-list">
+                    <div class="activity-item" th:each="actividad, iter : ${actividades}" th:if="${iter.index < 5}">
+                        <div class="activity-dot" th:classappend="${actividad.estado.name() == 'PENDIENTE' ? 'pendiente' : (actividad.estado.name() == 'EN_PROGRESO' ? 'en-progreso' : 'completada')}"></div>
+                        <div class="activity-content">
+                            <div class="activity-title" th:text="${actividad.nombre}">Nombre de la actividad</div>
+                            <div class="activity-info" th:text="${actividad.descripcion}">Descripción de la actividad</div>
+                            <div class="activity-date" th:text="'Fecha límite: ' + ${#temporals.format(actividad.fechaFinal, 'dd/MM/yyyy')}">Fecha: 01/01/2025</div>
+                        </div>
+                        <div class="activity-status" th:text="${actividad.estado.name()}">PENDIENTE</div>
+                    </div>
+                </div>
+                <div class="card-footer" th:if="${actividades.size() > 5}">
+                    <a th:href="@{/desarrollador/actividades}" class="btn">Ver todas las actividades</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+                <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Datos desde el controlador
+    const totalActividades = /*[[${totalActividades}]]*/ 0;
+    const actividadesPendientes = /*[[${actividadesPendientes}]]*/ 0;
+    const actividadesEnProceso = /*[[${actividadesEnProceso}]]*/ 0;
+    const actividadesFinalizadas = /*[[${actividadesFinalizadas}]]*/ 0;
+
+    // Gráfico de progreso
+    const progressCtx = document.getElementById('progressChart').getContext('2d');
+    const progressChart = new Chart(progressCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pendientes', 'En Proceso', 'Completadas'],
+            datasets: [{
+                data: [actividadesPendientes, actividadesEnProceso, actividadesFinalizadas],
+                backgroundColor: ['#ff9f1c', '#4361ee', '#2ec4b6'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            },
+            cutout: '70%'
+        }
+    });
+
+    // Gráfico de línea de tiempo (mockup de datos)
+    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+    const timelineChart = new Chart(timelineCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+            datasets: [
+                {
+                    label: 'Completadas',
+                    data: [3, 4, 2, actividadesFinalizadas],
+                    backgroundColor: '#2ec4b6'
+                },
+                {
+                    label: 'En Proceso',
+                    data: [4, 3, 5, actividadesEnProceso],
+                    backgroundColor: '#4361ee'
+                },
+                {
+                    label: 'Pendientes',
+                    data: [5, 4, 3, actividadesPendientes],
+                    backgroundColor: '#ff9f1c'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

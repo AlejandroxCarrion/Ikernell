@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proyectos - IKernell Soluciones Software</title>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .project-section {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .form-section, .list-section {
+            flex: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            width: 100%;
+        }
+
+        .card-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .project-card {
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-label {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .habilitado {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .inhabilitado {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .success {
+            background-color: #28a745;
+        }
+
+        .error {
+            background-color: #dc3545;
+        }
+
+        .show {
+            opacity: 1;
+        }
+
+        /* Nuevos estilos para la barra de búsqueda */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Estilos para la paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+        .pagination-btn.active {
+            background: #007bff;
+            color: white;
+            background: #007bff;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Estilo para información de paginación */
+        .pagination-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/coordinador/index}">Dashboard</a></li>
+                <li><a th:href="@{/coordinador/proyectos}" class="active">Proyectos</a></li>
+                <li><a th:href="@{/coordinador/Usuarios}">Usuarios</a></li>
+                <li><a th:href="@{/coordinador/biblioteca}">Biblioteca</a></li>
+                <li><a th:href="@{/coordinador/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<section class="dashboard-section">
+    <div class="container">
+        <h1>Gestión de Proyectos</h1>
+        <p>Cree nuevos proyectos y administre los existentes desde este panel.</p>
+
+        <div class="project-section">
+            <!-- Formulario de Creación de Proyecto -->
+            <div class="form-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Registrar Nuevo Proyecto</h3>
+                    </div>
+                    <form th:action="@{/coordinador/proyectos}" method="POST">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre del Proyecto</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre"
+                                   pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estado" class="form-label">Estado del Proyecto</label>
+                            <select class="form-control" id="estado" name="estado">
+                                <option value="HABILITADO">Habilitado</option>
+                                <option value="INHABILITADO">Inhabilitado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lider" class="form-label">Líder del Proyecto</label>
+                            <select class="form-control" id="lider" name="lider">
+                                <option value="" disabled selected>Seleccione un líder</option>
+                                <option th:each="lider : ${lideres}" th:value="${lider.id}" th:text="${lider.nombre + ' ' + lider.apellido}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar Proyecto</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Proyectos -->
+            <div class="list-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Proyectos Registrados</h3>
+                    </div>
+
+                    <!-- Barra de búsqueda -->
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input form-control" placeholder="Buscar proyectos...">
+                        <button id="searchBtn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+
+                    <div class="project-list">
+                        <div th:if="${proyectos.isEmpty()}" class="empty-state">
+                            <p>No hay proyectos registrados aún.</p>
+                        </div>
+                        <div th:each="proyecto, iterStat : ${proyectos}" class="card project-card proyecto-item"
+                             th:data-page="${iterStat.count <= 3 ? 1 : (iterStat.count / 3) + (iterStat.count % 3 == 0 ? 0 : 1)}"
+                             th:style="${iterStat.count > 3 ? 'display: none;' : ''}">
+                            <div class="project-header">
+                                <h4 th:text="${proyecto.nombre}" class="proyecto-nombre"></h4>
+                                <span th:class="${proyecto.estado == T(com.ikernell.model.EstadoProyecto).HABILITADO ? 'project-label habilitado' : 'project-label inhabilitado'}"
+                                      th:text="${proyecto.estado == T(com.ikernell.model.EstadoProyecto).HABILITADO ? 'Habilitado' : 'Inhabilitado'}" class="proyecto-estado"></span>
+                            </div>
+                            <p th:text="${#strings.abbreviate(proyecto.descripcion, 100)}" class="proyecto-descripcion"></p>
+                            <div class="project-info">
+                                <p><strong>Fecha inicio:</strong> <span th:text="${#dates.format(proyecto.fechaInicio, 'dd/MM/yyyy')}"></span></p>
+                                <p><strong>Líder:</strong> <span th:text="${proyecto.lider != null ? proyecto.lider.nombre + ' ' + proyecto.lider.apellido : 'Sin asignar'}" class="proyecto-lider"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div id="paginationContainer" class="pagination"></div>
+                    <div id="paginationInfo" class="pagination-info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+                <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Notification element -->
+<div id="notification" class="notification"></div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    // Set min date for date input to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fechaInicio').setAttribute('min', today);
+
+    // Function to show notifications
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Check URL parameters for success/error messages
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            showNotification('¡Proyecto creado exitosamente!', 'success');
+        } else if (urlParams.has('error')) {
+            showNotification('Ha ocurrido un error. Inténtelo nuevamente.', 'error');
+        }
+
+        // Inicializar paginación
+        setupPagination();
+
+        // Configurar búsqueda
+        setupSearch();
+    });
+
+    // Función para configurar paginación
+    function setupPagination() {
+        const proyectoItems = document.querySelectorAll('.proyecto-item');
+        const itemsPerPage = 2;
+
+        // Si no hay proyectos, no es necesaria la paginación
+        if (proyectoItems.length === 0) {
+            return;
+        }
+
+        // Calcular el número total de páginas
+        const totalPages = Math.ceil(proyectoItems.length / itemsPerPage);
+
+        // Mostrar los elementos de la primera página
+        showPage(1);
+
+        // Crear botones de paginación
+        createPaginationButtons(totalPages);
+
+        // Actualizar la información de paginación
+        updatePaginationInfo(1, totalPages, proyectoItems.length);
+    }
+
+    // Función para mostrar una página específica
+    function showPage(pageNumber) {
+        const proyectoItems = document.querySelectorAll('.proyecto-item:not(.filtered-out)');
+        const itemsPerPage = 2;
+        const startIndex = (pageNumber - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        proyectoItems.forEach((item, index) => {
+            item.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
+        });
+
+        // Actualizar botones de paginación activos
+        const buttons = document.querySelectorAll('.pagination-btn');
+        buttons.forEach(button => {
+            if (parseInt(button.dataset.page) === pageNumber) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+
+        // Actualizar información de paginación
+        const totalPages = Math.ceil(proyectoItems.length / itemsPerPage);
+        updatePaginationInfo(pageNumber, totalPages, proyectoItems.length);
+    }
+
+    // Función para crear botones de paginación
+    function createPaginationButtons(totalPages) {
+        const paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        // Botón anterior
+        const prevButton = document.createElement('button');
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevButton.className = 'pagination-btn';
+        prevButton.dataset.page = 'prev';
+        paginationContainer.appendChild(prevButton);
+
+        // Botones de página
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.innerText = i;
+            pageButton.className = i === 1 ? 'pagination-btn active' : 'pagination-btn';
+            pageButton.dataset.page = i;
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // Botón siguiente
+        const nextButton = document.createElement('button');
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextButton.className = 'pagination-btn';
+        nextButton.dataset.page = 'next';
+        paginationContainer.appendChild(nextButton);
+
+        // Agregar event listeners
+        setupPaginationEventListeners(totalPages);
+    }
+
+    // Función para configurar event listeners de paginación
+    function setupPaginationEventListeners(totalPages) {
+        const buttons = document.querySelectorAll('.pagination-btn');
+        let currentPage = 1;
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const pageAction = button.dataset.page;
+
+                if (pageAction === 'prev') {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        showPage(currentPage);
+                    }
+                } else if (pageAction === 'next') {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        showPage(currentPage);
+                    }
+                } else {
+                    currentPage = parseInt(pageAction);
+                    showPage(currentPage);
+                }
+            });
+        });
+    }
+
+    // Función para actualizar la información de paginación
+    function updatePaginationInfo(currentPage, totalPages, totalItems) {
+        const paginationInfo = document.getElementById('paginationInfo');
+        paginationInfo.innerText = `Página ${currentPage} de ${totalPages} (${totalItems} proyectos)`;
+    }
+
+    // Función para configurar la búsqueda
+    function setupSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // Función para realizar la búsqueda
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const proyectoItems = document.querySelectorAll('.proyecto-item');
+            let visibleCount = 0;
+
+            proyectoItems.forEach(item => {
+                const nombre = item.querySelector('.proyecto-nombre').textContent.toLowerCase();
+                const descripcion = item.querySelector('.proyecto-descripcion').textContent.toLowerCase();
+                const estado = item.querySelector('.proyecto-estado').textContent.toLowerCase();
+                const lider = item.querySelector('.proyecto-lider').textContent.toLowerCase();
+
+                // Verificar si el término de búsqueda coincide con alguno de los campos
+                const matches = nombre.includes(searchTerm) ||
+                               descripcion.includes(searchTerm) ||
+                               estado.includes(searchTerm) ||
+                               lider.includes(searchTerm);
+
+                // Mostrar u ocultar según corresponda y marcar para paginación
+                if (matches) {
+                    item.classList.remove('filtered-out');
+                    visibleCount++;
+                } else {
+                    item.classList.add('filtered-out');
+                    item.style.display = 'none';
+                }
+            });
+
+            // Recalcular paginación basada en resultados filtrados
+            const totalPages = Math.ceil(visibleCount / 2);
+            createPaginationButtons(totalPages);
+            showPage(1);
+
+            // Mostrar mensaje si no hay resultados
+            const emptyState = document.querySelector('.empty-state');
+            if (visibleCount === 0 && !emptyState) {
+                const projectList = document.querySelector('.project-list');
+                const noResults = document.createElement('div');
+                noResults.className = 'empty-state';
+                noResults.innerHTML = '<p>No se encontraron proyectos que coincidan con la búsqueda.</p>';
+                projectList.appendChild(noResults);
+            } else if (visibleCount > 0) {
+                const existingEmptyState = document.querySelector('.empty-state');
+                if (existingEmptyState) {
+                    existingEmptyState.remove();
+                }
+            }
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+</script>
+</body>
+</html>
